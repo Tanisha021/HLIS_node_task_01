@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav>
+        <a href="/listing">Users</a>
+        <% if (user) { %>
+            <a href="/profile">Profile</a>
+            <a href="/adduser">Add User</a>
+            <a href="/logout">Logout</a>
+        <% } else { %>
+            <a href="/login">Login</a>
+        <% } %>
+    </nav>
+    <div class="container">
+        <%- body %> 
+    </div>
+</body>
+</html>

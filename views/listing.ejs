@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List User</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+    <div class="flex justify-center items-center min-h-screen relative">
+        <!-- Logout Button -->
+        <div class="absolute top-4 right-4">
+            <a href="/logout" class="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                Log Out
+            </a>
+        </div>
+
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
+            <h1 class="text-3xl font-semibold text-center text-gray-800 mb-6">User List</h1>
+            
+            <table class="min-w-full table-auto border-collapse">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 bg-gray-200">ID</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 bg-gray-200">Name</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 bg-gray-200">Email</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 bg-gray-200">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (data.length > 0) { %>
+                        <% data.forEach(function(element) { %>
+                            <tr class="border-t">
+                                <td class="px-4 py-2 text-sm text-gray-700"><%= element.user_id %></td>
+                                <td class="px-4 py-2 text-sm text-gray-700"><%= element.user_full_name %></td>
+                                <td class="px-4 py-2 text-sm text-gray-700"><%= element.email_id %></td>
+                                <td class="px-4 py-2 text-sm text-gray-700">
+                                    <a href="/edit/<%= element.user_id %>" class="text-indigo-600 hover:text-indigo-800">Edit</a>
+                                    <a href="/delete/<%= element.user_id %>" class="ml-4 text-red-600 hover:text-red-800">Delete</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="4" class="px-4 py-2 text-sm text-center text-gray-700">No users found</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+
+            <div class="mt-6 text-center">
+                <a href="/addUser" class="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Add User</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
