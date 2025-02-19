@@ -15,12 +15,52 @@
             <form action="/addUser" method="POST" class="space-y-6">
                 <div>
                     <label for="user_full_name" class="block text-gray-600 font-medium">Full Name:</label>
-                    <input type="text" id="user_full_name" name="user_full_name" required class="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" id="user_full_name" name="user_full_name" required 
+                        pattern="^(?!\s)[A-Za-z0-9\s]+$"
+                        title="Name cannot start with a space"
+                        class="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
+                
 
                 <div>
                     <label for="email_id" class="block text-gray-600 font-medium">Email ID:</label>
                     <input type="email" id="email_id" name="email_id" required class="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label for="passwords" class="block text-gray-600 font-medium">Password</label>
+                    <div class="relative">
+                        <input type="password" id="passwords" name="passwords" required class="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
+                            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3C7 3 4 7 4 7s3 4 8 4 8-4 8-4-3-4-8-4zM12 12c-2 0-3 1-3 1s1 2 3 2 3-2 3-2-1-1-3-1z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label for="confirm_password" class="block text-gray-600 font-medium">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required class="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <span id="passwordError" class="text-red-500 text-sm mt-1 hidden">Passwords do not match.</span>
+                </div>
+
+                <div class="mt-4">
+                    <label for="mobile_number" class="block text-gray-600 font-medium">Mobile Number:</label>
+                    <input type="tel" id="mobile_number" name="mobile_number" required 
+                        pattern="[0-9]{10}" 
+                        title="Enter a valid 10-digit mobile number",
+                        onclick='validateMobile()',
+                        class="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div class="mt-4">
+                    <label for="gender" class="block text-gray-600 font-medium">Gender:</label>
+                    <select id="gender" name="gender" required 
+                        class="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="" disabled selected>Select Gender</option>
+                        <option value="female">Female</option>
+                        <option value="male">Male</option>
+                        <option value="other">Other</option>
+                    </select>
                 </div>
 
                 <div class="flex justify-center">
@@ -29,6 +69,96 @@
             </form>
         </div>
     </div>
+    <script>
+        function validateMobile() {
+            let inputField = document.getElementById('mobile_number');
+        
+            inputField.addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '');
+                if (this.value.length > 10) {
+                    this.value = this.value.slice(0, 10);
+                    alert('You can only enter 10 digits.');
+                }
+                if (/[a-zA-Z]/.test(this.value)) {
+                        alert('You cannot enter letters.');
+                    }
+                });
+        }
 
+        
+
+        function togglePasswordVisibility() {
+                var passwordField = document.getElementById('passwords');
+                var confirmPasswordField = document.getElementById('confirm_password');
+                var eyeIcon = document.getElementById('eyeIcon');
+                
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text'; 
+                    confirmPasswordField.type = 'text';
+                    eyeIcon.setAttribute('d', 'M12 3C7 3 4 7 4 7s3 4 8 4 8-4 8-4-3-4-8-4zM12 12c-2 0-3 1-3 1s1 2 3 2 3-2 3-2-1-1-3-1z');  // Change eye icon to open
+                } else {
+                    passwordField.type = 'password';  // Hide password
+                    confirmPasswordField.type = 'password'; // Hide confirm password
+                    eyeIcon.setAttribute('d', 'M12 3C7 3 4 7 4 7s3 4 8 4 8-4 8-4-3-4-8-4zM12 12c-2 0-3 1-3 1s1 2 3 2 3-2 3-2-1-1-3-1z');  // Change eye icon to closed
+                }
+            }
+
+        document.getElementById('togglePassword').addEventListener('click', togglePasswordVisibility);
+        
+        // Password validation
+        var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        function validatePassword() {
+                let passwordField = document.getElementById('passwords');
+
+                    passwordField.addEventListener('blur', function() {
+                        let password = this.value;
+
+                        // Check if the password matches the pattern
+                        if (!passwordPattern.test(password)) {
+                            // If it doesn't match, display an alert or message
+                            alert('Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&).');
+                            document.getElementById('confirm_password').disabled = true;
+                        }else{
+                            document.getElementById('confirm_password').disabled = false;
+                        }
+                    });
+                }
+
+            // Call the validation function after the DOM content is loaded
+            // document.addEventListener('DOMContentLoaded', function() {
+            //     validatePassword();
+            // });
+
+        function validatePasswordsMatch() {
+            var password = document.getElementById('passwords').value;
+            var confirmPassword = document.getElementById('confirm_password').value;
+            var passwordError = document.getElementById('passwordError');
+            
+            if (password !== confirmPassword) {
+                passwordError.classList.remove('hidden');
+                alert("Password and Confirm Password do not match!");
+            } else {
+                passwordError.classList.add('hidden');
+            }
+        }
+
+        
+        // document.getElementById('confirm_password').addEventListener('blur', validatePasswordsMatch);
+        document.addEventListener('DOMContentLoaded', function() {
+        validatePassword();
+        document.getElementById('confirm_password').addEventListener('focusout', validatePasswordsMatch);
+    });
+
+            document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('myForm').addEventListener('submit', function (event) {
+                if (!validateMobile() || !validatePassword() || !validatePasswordsMatch()) {
+                    event.preventDefault(); // Prevent form submission if any validation fails
+                }
+            });
+        });
+
+
+    </script>
 </body>
 </html>

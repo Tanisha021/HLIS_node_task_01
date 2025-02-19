@@ -25,7 +25,9 @@
                         <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 bg-gray-200">ID</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 bg-gray-200">Name</th>
                         <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 bg-gray-200">Email</th>
-                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 bg-gray-200">Action</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 bg-gray-200">Mobile Number</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 bg-gray-200">Gender</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 bg-gray-200">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,6 +37,8 @@
                                 <td class="px-4 py-2 text-sm text-gray-700"><%= element.user_id %></td>
                                 <td class="px-4 py-2 text-sm text-gray-700"><%= element.user_full_name %></td>
                                 <td class="px-4 py-2 text-sm text-gray-700"><%= element.email_id %></td>
+                                <td class="px-4 py-2 text-sm text-gray-700"><%= element.mobile_number %></td>
+                                <td class="px-4 py-2 text-sm text-gray-700"><%= element.gender %></td>
                                 <td class="px-4 py-2 text-sm text-gray-700">
                                     <a href="/edit/<%= element.user_id %>" class="text-indigo-600 hover:text-indigo-800">Edit</a>
                                     <a href="/delete/<%= element.user_id %>" class="ml-4 text-red-600 hover:text-red-800">Delete</a>

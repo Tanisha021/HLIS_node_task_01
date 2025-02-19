@@ -1,13 +1,20 @@
 const sql = require('mysql2');
 let credentials = {}
-
+require('dotenv').config();
 // condition to check where enviroment is production or development
+// credentials = {
+//     host: "127.0.0.1",
+//     user: "root",  
+//     password: "12345678",  
+//     database: "DB_17",  
+//     dateStrings: "date"
+// };
 credentials = {
-    host: "127.0.0.1",
-    user: "root",  
-    password: "12345678",  
-    database: "DB_17",  
-    dateStrings: "date"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    dateStrings: process.env.DB_DATE_STRINGS
 };
 
 const database = sql.createPool(credentials).promise();

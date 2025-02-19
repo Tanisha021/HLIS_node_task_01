@@ -2,10 +2,11 @@ const express = require('express');
 const conn = require('./config/database');
 const bodyParser = require('body-parser');
 const app = express();
+require('dotenv').config();
 const path = require("path");
-const port = 3000;
+const port = process.env.PORT || 3000;
 const session = require("express-session");
-const ejsLayouts = require("express-ejs-layouts");
+// const ejsLayouts = require("express-ejs-layouts");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -58,29 +59,29 @@ app.get('/login', (req, res) => {
   });
 
 //Handle Login
-app.post("/login", async (req, res) => {
-    try {
-      const { email_id, passwords } = req.body;
-      console.log(email_id, passwords);
-  
-      // Use await for the promise-based query
-      const [user] = await conn.query(
-        "SELECT * FROM tbl_user WHERE email_id = ? AND passwords = ?",
-        [email_id, passwords]
-      );
-      console.log("user", user);
-  
-      if (user.length > 0) {
-        req.session.user = user[0];
-        res.redirect("/listing");
-      } else {
-        res.send("Invalid credentials. <a href='/login'>Try Again</a>");
-      }
-    } catch (err) {
-      console.error("Error during login:", err);
-      res.status(500).send("Error during login. Please try again.");
-    }
-  });
+    app.post("/login", async (req, res) => {
+        try {
+        const { email_id, passwords } = req.body;
+        console.log(email_id, passwords);
+    
+        // Use await for the promise-based query
+        const [user] = await conn.query(
+            "SELECT * FROM tbl_user WHERE email_id = ? AND passwords = ?",
+            [email_id, passwords]
+        );
+        console.log("user", user);
+        
+        if (user.length > 0) {
+            req.session.user = user[0];
+            res.redirect("/listing");
+        } else {
+            res.render("login", { error: "Invalid email or password. Please try again." });
+        }
+        } catch (error) {
+        console.error("Error during login:", err);
+        res.status(500).send("Error during login. Please try again.");
+        }
+    });
   
 
 app.get('/edit/:id',async(req,res)=>{
@@ -96,60 +97,56 @@ app.get('/edit/:id',async(req,res)=>{
 
 app.post('/editUser/:id', async (req, res) => {
     try {
-      const userObj = {
-        user_full_name: req.body.user_full_name,
-        email_id: req.body.email_id,
-      };
-  
-      const userId = req.params.id;
-      console.log(userId, userObj);
-  
-      // Update query with async/await
-      const [result] = await conn.query("UPDATE tbl_user SET ? WHERE user_id = ?", [userObj, userId]);
-  
-      if (result.affectedRows > 0) {
-        res.redirect('/listing');
-      } else {
-        res.send('Error updating user data');
-      }
+        const userId = req.params.id;
+        const { user_full_name, email_id, mobile_number, gender } = req.body;
+        
+        if (!userId || !user_full_name || !email_id || !mobile_number || !gender) {
+            return res.status(400).send('Missing required fields');
+        }
+        
+        const userObj = { user_full_name, email_id, mobile_number, gender };
+        const [result] = await conn.query("UPDATE tbl_user SET ? WHERE user_id = ?", [userObj, userId]);
+        
+        return result.affectedRows > 0 ? res.redirect('/listing') : res.status(400).send('Error updating user data');
     } catch (err) {
-      console.error('Error:', err);
-      res.send('Error updating user data');
+        console.error('Error updating user:', err);
+        return res.status(500).send('Internal Server Error');
     }
-  });
-  
+});
 
 app.post('/addUser', async (req, res) => {
     try {
-      const { user_full_name, email_id } = req.body;
-      const query = "INSERT INTO tbl_user (user_full_name, email_id, is_deleted) VALUES (?, ?, 0)";
-  
-      // Use promise-based query
-      await conn.query(query, [user_full_name, email_id]);
-  
-      // Redirect after successful insertion
-      res.redirect('/listing');
-    } catch (err) {
-      console.error('Error adding user:', err);
-      res.send('Error adding user');
-    }
-  });
-  
-  
-app.get("/delete/:id", async(req, res)=>{
-    try {
-        const result = await conn.query("DELETE FROM tbl_user WHERE user_id = ?", [
-          req.params.id,
-        ]);
-    
-        if (result.affectedRows === 0) {
-          return res.status(404).send("User not found.");
+        const { user_full_name, email_id, passwords, mobile_number, gender } = req.body;
+        
+        if (!user_full_name || !email_id || !passwords || !mobile_number || !gender) {
+            return res.status(400).send('Missing required fields');
         }
-        res.redirect("/listing");
-      } catch (err) {
-        console.error("Error deleting user:", err);
-        res.status(500).send("Error deleting user. Please try again.");
+        
+        const query = "INSERT INTO tbl_user (user_full_name, email_id, passwords, mobile_number, gender, is_deleted) VALUES (?, ?, ?, ?, ?, 0)";
+        const [result] = await conn.query(query, [user_full_name, email_id, passwords, mobile_number, gender]);
+        
+        return result.affectedRows > 0 ? res.redirect('/listing') : res.status(400).send('Error adding user');
+    } catch (err) {
+        console.error('Error adding user:', err);
+        return res.status(500).send('Internal Server Error');
+    }
+});
+
+  
+app.get("/delete/:id", async (req, res) => {
+    try {
+      const result = await conn.query("DELETE FROM tbl_user WHERE user_id = ?", [
+        req.params.id,
+      ]);
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).send("User not found.");
       }
+      res.redirect("/listing");
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      res.status(500).send("Error deleting user. Please try again.");
+    }
   });
   
   
